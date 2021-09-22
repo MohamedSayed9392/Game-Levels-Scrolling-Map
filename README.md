@@ -57,10 +57,9 @@ Widget build(BuildContext context) {
   return Scaffold(
     body: Container(
       child: GameLevelsScrollingMap.scrollable(
-            "assets/drawable/map_vertical.png",
-            direction: Axis.vertical,
-            reverseScrolling: true,
-            svgUrl: 'assets/svg/map_vertical.svg',
+            "assets/drawable/map_horizontal.png",
+            direction: Axis.horizontal,
+            svgUrl: 'assets/svg/map_horizontal.svg',
             points: points,)
           ),
         );
