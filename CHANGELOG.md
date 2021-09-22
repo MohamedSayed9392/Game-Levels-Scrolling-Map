@@ -1,4 +1,4 @@
-## 0.0.1
+## 0.0.2
 
 * Game levels map like candy crush with the following features :
         - Option to make it horizontal map or vertical
