@@ -33,7 +33,7 @@ for(int i = 0; i<50 ; i++){
 **Step 3** Use `GameLevelScrollingMap.scrollable` widget to build the map<br>
 
 **- To make vertical map:**<br>
-<img src="/screenshots/screenshot_map_vertical.png?raw=true" alt="Vertical Map Example" width="400"/><br>
+<img src="https://raw.githubusercontent.com/MohamedSayed9392/Game-Levels-Scrolling-Map/master/screenshots/screenshot_map_vertical.png" alt="Vertical Map Example" width="400"/><br>
 
 ```dart
 Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ Widget build(BuildContext context) {
 }
 ```
 **- To make horizontal map:**<br>
-<img src="/screenshots/screenshot_map_horizantal.png?raw=true" alt="Horizontal Map Example" width="500"/><br><br>
+<img src="https://raw.githubusercontent.com/MohamedSayed9392/Game-Levels-Scrolling-Map/master/screenshots/screenshot_map_horizantal.png" alt="Horizontal Map Example" width="500"/><br><br>
 
 ```dart
 Widget build(BuildContext context) {
