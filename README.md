@@ -1,4 +1,4 @@
-# game_levels_scrolling_map
+# Game Levels Scrolling Map
 
 A package for making game levels map like candy crush or similar games using flutter with ability to be horizontal or vertical
 
@@ -22,53 +22,50 @@ then Import `package:game_levels_scrolling_map/model/point_model.dart` which con
 
 **Step 2** Start adding your points widgets by creating a new List of points and adding widgets to it using the `PointModel` class<br>
 
-    ```dart
-      List<PointModel> points = [];
+```dart
+List<PointModel> points = [];
       
-      for(int i = 0; i<50 ; i++){
-          points.add(PointModel(100,Container(width: 40,
-                                              height: 40,
-                                              color: Colors.red,
-                                              child: Text("$i"))));
-      }
-    ```
+for(int i = 0; i<50 ; i++){
+  points.add(PointModel(100,Container(width: 40, height: 40, color: Colors.red, child: Text("$i"))));
+}
+```
 
 **Step 3** Use `GameLevelScrollingMap.scrollable` widget to build the map<br>
 
 **- To make vertical map:**<br>
-![Vertical Map Example](/screenshots/screenshot_map_vertical.png?raw=true)<br>
+<img src="/screenshots/screenshot_map_vertical.png?raw=true" alt="Vertical Map Example" width="400"/><br>
 
-    ```dart
-      Widget build(BuildContext context) {
-        return Scaffold(
-          body: Container(
-              child: GameLevelsScrollingMap.scrollable(
-                "assets/drawable/map_vertical.png",
-                direction: Axis.vertical,
-                reverseScrolling: true,
-                svgUrl: 'assets/svg/map_vertical.svg',
-                points: points,)
+```dart
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Container(
+      child: GameLevelsScrollingMap.scrollable(
+              "assets/drawable/map_vertical.png",
+              direction: Axis.vertical,
+              reverseScrolling: true,
+              svgUrl: 'assets/svg/map_vertical.svg',
+              points: points,)
           ),
         );
-      }
-    ```
+}
+```
 **- To make horizontal map:**<br>
-![Horizontal Map Example](/screenshots/screenshot_map_horizantal.png?raw=true)<br>
+<img src="/screenshots/screenshot_map_horizantal.png?raw=true" alt="Horizontal Map Example" width="500"/><br><br>
 
-    ```dart
-      Widget build(BuildContext context) {
-        return Scaffold(
-          body: Container(
-              child: GameLevelsScrollingMap.scrollable(
-                "assets/drawable/map_vertical.png",
-                direction: Axis.vertical,
-                reverseScrolling: true,
-                svgUrl: 'assets/svg/map_vertical.svg',
-                points: points,)
+```dart
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Container(
+      child: GameLevelsScrollingMap.scrollable(
+            "assets/drawable/map_vertical.png",
+            direction: Axis.vertical,
+            reverseScrolling: true,
+            svgUrl: 'assets/svg/map_vertical.svg',
+            points: points,)
           ),
         );
-      }
-    ```
+}
+```
 
 
 
