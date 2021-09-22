@@ -1,0 +1,33 @@
+name: game_levels_scrolling_map_example
+description: A game levels scrolling map example.
+author: Mohamed Sayed <MohamedSayed9392@gmail.com>
+homepage: https://github.com/MohamedSayed9392/Game-Levels-Scrolling-Map
+version: 0.0.1
+
+dependencies:
+  game_levels_scrolling_map:
+    path: ../
+  flutter:
+    sdk: flutter
+
+# For information on the generic Dart part of this file, see the
+# following page: https://www.dartlang.org/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  assets:
+    - assets/drawable/map_vertical.png
+    - assets/drawable/map_vertical_point.png
+    - assets/drawable/map_horizontal.png
+    - assets/drawable/map_horizontal_point.png
+    - assets/svg/map_vertical.svg
+    - assets/svg/map_horizontal.svg
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.17.0"
