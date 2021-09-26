@@ -20,6 +20,8 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
             "assets/drawable/map_vertical.png",
             direction: Axis.vertical,
             reverseScrolling: true,
+            pointsPositionDeltaX: 25,
+            pointsPositionDeltaY: 25,
             svgUrl: 'assets/svg/map_vertical.svg',
             points: points,)
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -48,11 +50,11 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
           Image.asset(
             "assets/drawable/map_vertical_point.png",
             fit: BoxFit.fitWidth,
-            width: 100,
+            width: 50,
           ),
           Text("$order",
               style: const TextStyle(color: Colors.black,
-                  fontSize: 20))
+                  fontSize: 15))
         ],
       ),
       onTap: () {

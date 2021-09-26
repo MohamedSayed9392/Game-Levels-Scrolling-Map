@@ -23,7 +23,8 @@ class GameLevelsScrollingMap extends StatefulWidget {
 
   List<PointModel>? points = [];
 
-  double? parentPadding = 0;
+  double? pointsPositionDeltaX = 0;
+  double? pointsPositionDeltaY = 0;
 
   bool isScrollable = false;
   Axis? direction = Axis.horizontal;
@@ -35,7 +36,8 @@ class GameLevelsScrollingMap extends StatefulWidget {
         this.points,
         this.x_values,
         this.y_values,
-        this.parentPadding,
+        this.pointsPositionDeltaX,
+        this.pointsPositionDeltaY,
         Key? key})
       : super(key: key);
 
@@ -47,7 +49,8 @@ class GameLevelsScrollingMap extends StatefulWidget {
         this.points,
         this.x_values,
         this.y_values,
-        this.parentPadding,
+        this.pointsPositionDeltaX,
+        this.pointsPositionDeltaY,
         this.reverseScrolling,
         Key? key})
       : super(key: key) {
@@ -89,7 +92,8 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
     widget.x_values ??= [];
     widget.y_values ??= [];
     widget.points ??= [];
-    widget.parentPadding ??= 0;
+    widget.pointsPositionDeltaX ??= 0;
+    widget.pointsPositionDeltaY ??= 0;
     widget.direction ??= Axis.horizontal;
     widget.reverseScrolling ??=false;
     widget.height ??= Q.deviceHeight;
@@ -216,12 +220,12 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
       //widget.points!.add(PointModel(100, testWidget(i)));
       if (widget.x_values!.length > i) {
         var x = (widget.x_values![i] * maxWidth / imageWidth) +
-            widget.parentPadding!;
+            widget.pointsPositionDeltaX!;
 
         x = x - (widget.points![i].width! / 2);
 
         var y = (widget.y_values![i] * maxHeight / imageHeight) +
-            widget.parentPadding!;
+            widget.pointsPositionDeltaY!;
 
         y = y - (widget.points![i].width! / 2);
 

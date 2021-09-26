@@ -1,6 +1,6 @@
 name: game_levels_scrolling_map
 description: A package for making game levels map like candy crush or similar games using flutter with ability to be horizontal or vertical
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/MohamedSayed9392/Game-Levels-Scrolling-Map
 
 environment:
