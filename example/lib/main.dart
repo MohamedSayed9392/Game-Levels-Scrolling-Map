@@ -6,7 +6,7 @@ import 'examples/map_horizontal_example.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
   await SystemChrome.setEnabledSystemUIOverlays([]);
 
   runApp(const MyApp());
@@ -39,8 +39,8 @@ class _MyAppState extends State<MyApp> {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      //home: MapHorizontalExample(),
-      home: MapVerticalExample(),
+      home: MapHorizontalExample(),
+      //home: MapVerticalExample(),
     );
   }
 }

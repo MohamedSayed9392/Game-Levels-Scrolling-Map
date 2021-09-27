@@ -12,7 +12,7 @@ A package for making game levels map like candy crush or similar games using flu
 
 ## Platform Support
 
-| Android ✔ | iOS ✔ | MacOS ❌ ️| Web ❌️ | Linux ❌️ | Windows ❌ ️|
+| Android ✔ | iOS ✔ | MacOS ❌ ️| Web ✔️ | Linux ❌️ | Windows ✔ ️|
 
 ## Usage
 <br>
