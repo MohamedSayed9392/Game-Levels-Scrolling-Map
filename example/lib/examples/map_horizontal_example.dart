@@ -10,17 +10,15 @@ class MapHorizontalExample extends StatefulWidget {
 }
 
 class _MapHorizontalExampleState extends State<MapHorizontalExample> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
           child: GameLevelsScrollingMap.scrollable(
-            "assets/drawable/map_horizontal.png",
-            svgUrl: "assets/svg/map_horizontal.svg",
-            points: points,)
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        "assets/drawable/map_horizontal.png",
+        svgUrl: "assets/svg/map_horizontal.svg",
+        points: points,
+      )), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -32,8 +30,8 @@ class _MapHorizontalExampleState extends State<MapHorizontalExample> {
   List<PointModel> points = [];
 
   void fillTestData() {
-    for(int i = 0; i<50 ; i++){
-      points.add(PointModel(100,testWidget(i)));
+    for (int i = 0; i < 50; i++) {
+      points.add(PointModel(100, testWidget(i)));
     }
   }
 
@@ -49,7 +47,7 @@ class _MapHorizontalExampleState extends State<MapHorizontalExample> {
             width: 100,
           ),
           Text("$order",
-              style: const TextStyle(color: Colors.black,fontSize: 40))
+              style: const TextStyle(color: Colors.black, fontSize: 40))
         ],
       ),
       onTap: () {

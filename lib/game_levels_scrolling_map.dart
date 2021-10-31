@@ -2,19 +2,20 @@ library game_levels_scrolling_map;
 
 import 'dart:async';
 import 'dart:ui' as ui show Image;
+
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
-import 'config/q.dart';
-import 'widgets/loading_progress.dart';
+
 import '../helper/utils.dart';
-
-
+import 'config/q.dart';
 import 'model/point_model.dart';
+import 'widgets/loading_progress.dart';
 
 class GameLevelsScrollingMap extends StatefulWidget {
   double? height;
   double? width;
 
+  double? currentPointDeltaY;
   String imageUrl;
   String? svgUrl = "";
 
@@ -30,30 +31,34 @@ class GameLevelsScrollingMap extends StatefulWidget {
   Axis? direction = Axis.horizontal;
   bool? reverseScrolling = false;
 
-  GameLevelsScrollingMap(this.imageUrl,
-      {@required this.width,
-        this.svgUrl,
-        this.points,
-        this.x_values,
-        this.y_values,
-        this.pointsPositionDeltaX,
-        this.pointsPositionDeltaY,
-        Key? key})
-      : super(key: key);
+  GameLevelsScrollingMap(
+    this.imageUrl, {
+    @required this.width,
+    this.currentPointDeltaY,
+    this.svgUrl,
+    this.points,
+    this.x_values,
+    this.y_values,
+    this.pointsPositionDeltaX,
+    this.pointsPositionDeltaY,
+    Key? key,
+  }) : super(key: key);
 
-  GameLevelsScrollingMap.scrollable(this.imageUrl,
-      {this.width,
-        this.height,
-        this.direction,
-        this.svgUrl,
-        this.points,
-        this.x_values,
-        this.y_values,
-        this.pointsPositionDeltaX,
-        this.pointsPositionDeltaY,
-        this.reverseScrolling,
-        Key? key})
-      : super(key: key) {
+  GameLevelsScrollingMap.scrollable(
+    this.imageUrl, {
+    this.width,
+    this.height,
+    this.direction,
+    this.currentPointDeltaY,
+    this.svgUrl,
+    this.points,
+    this.x_values,
+    this.y_values,
+    this.pointsPositionDeltaX,
+    this.pointsPositionDeltaY,
+    this.reverseScrolling,
+    Key? key,
+  }) : super(key: key) {
     isScrollable = true;
   }
 
@@ -66,17 +71,14 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
       initDeviceDimensions();
       initDefaults();
 
       if (widget.svgUrl!.isNotEmpty) {
-        _getPathFromSVG().then((value) {
-          _loadImage(widget.imageUrl);
-        });
-      }else{
-        _loadImage(widget.imageUrl);
+        await _getPathFromSVG();
       }
+      _loadImage(widget.imageUrl);
     });
   }
 
@@ -95,11 +97,11 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
     widget.pointsPositionDeltaX ??= 0;
     widget.pointsPositionDeltaY ??= 0;
     widget.direction ??= Axis.horizontal;
-    widget.reverseScrolling ??=false;
+    widget.reverseScrolling ??= false;
     widget.height ??= Q.deviceHeight;
-    if(widget.direction == Axis.vertical) {
+    if (widget.direction == Axis.vertical) {
       widget.width ??= Q.deviceWidth;
-    }else if(widget.direction == Axis.horizontal){
+    } else if (widget.direction == Axis.horizontal) {
       widget.width ??= 0;
     }
     if (widget.width == double.infinity) {
@@ -122,25 +124,27 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
         height: maxHeight,
         child: widget.isScrollable
             ? SingleChildScrollView(
-          scrollDirection: widget.direction ?? Axis.horizontal,
-          reverse: widget.reverseScrolling ?? false,
-          child: aspectRatioWidget(),
-        )
+                scrollDirection: widget.direction ?? Axis.horizontal,
+                reverse: widget.reverseScrolling ?? false,
+                child: aspectRatioWidget(),
+              )
             : aspectRatioWidget());
   }
 
   Widget aspectRatioWidget() {
     return AspectRatio(
-        aspectRatio: aspectRatio,
-        child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return imageWidth != 0
-                  ? Stack(
+      aspectRatio: aspectRatio,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return imageWidth != 0
+              ? Stack(
                   textDirection: TextDirection.ltr,
                   alignment: AlignmentDirectional.topStart,
                   children: widgets)
-                  : const LoadingProgress();
-            }));
+              : const LoadingProgress();
+        },
+      ),
+    );
   }
 
   bool isImageLoaded = false;
@@ -172,10 +176,10 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
       aspectRatio = image.width.toDouble() / image.height.toDouble();
 
       if (widget.isScrollable) {
-        if(widget.direction == Axis.horizontal) {
+        if (widget.direction == Axis.horizontal) {
           maxHeight = widget.height!;
           maxWidth = maxHeight * aspectRatio;
-        }else if(widget.direction == Axis.vertical){
+        } else if (widget.direction == Axis.vertical) {
           maxWidth = widget.width!;
           maxHeight = maxWidth / aspectRatio;
         }
@@ -206,8 +210,8 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
       width: maxWidth,
       child: imageWidth != 0
           ? widget.imageUrl.contains("assets")
-          ? Image.asset(widget.imageUrl, fit: BoxFit.fill)
-          : Image.network(widget.imageUrl, fit: BoxFit.fill)
+              ? Image.asset(widget.imageUrl, fit: BoxFit.fill)
+              : Image.network(widget.imageUrl, fit: BoxFit.fill)
           : const LoadingProgress(),
     );
   }
@@ -224,16 +228,18 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
 
         x = x - (widget.points![i].width! / 2);
 
-        var y = (widget.y_values![i] * maxHeight / imageHeight) +
-            widget.pointsPositionDeltaY!;
-
+        var y = ((widget.y_values![i] * maxHeight / imageHeight) +
+            widget.pointsPositionDeltaY!);
+        if (widget.points![i].isCurrent! && widget.currentPointDeltaY != null) {
+          y = y - widget.currentPointDeltaY!;
+        }
         y = y - (widget.points![i].width! / 2);
 
         print(
             "${Q.TAG} old x,y : ${widget.x_values![i]},${widget.y_values![i]} ## new x,y : $x,$y");
 
         widgets.add(pointWidget(x, y, child: widget.points![i].child));
-      }else{
+      } else {
         break;
       }
     }
@@ -269,4 +275,3 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
     return path;
   }
 }
-
