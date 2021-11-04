@@ -5,7 +5,7 @@ class PointModel {
   Widget? child;
   bool? isCurrent;
 
-  PointModel(this.width, this.child, {isCurrent = false});
+  PointModel(this.width, this.child, {this.isCurrent = false});
 
   PointModel.fromJson(Map<String, dynamic> json) {
     width = json['Width'];
