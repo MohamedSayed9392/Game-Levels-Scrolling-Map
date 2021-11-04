@@ -12,7 +12,7 @@ A package for making game levels map like candy crush or similar games using flu
 
 ## Platform Support
 
-| Android ✔ | iOS ✔ | MacOS ❌ ️| Web ✔️ | Linux ❌️ | Windows ✔ ️|
+| Android ✔️ | IOS ✔️ | MacOS ✔️ ️| Web ✔️ | Linux ✔️ | Windows ✔ ️|
 
 ## Usage
 <br>
@@ -26,7 +26,12 @@ then Import `package:game_levels_scrolling_map/model/point_model.dart` which con
 List<PointModel> points = [];
       
 for(int i = 0; i<50 ; i++){
-  points.add(PointModel(100,Container(width: 40, height: 40, color: Colors.red, child: Text("$i"))));
+  PointModel point = PointModel(100,Container(width: 40, height: 40, color: Colors.red, child: Text("$i")));
+  
+  /* To make the map scroll to a specific point just make its parameter 'isCurrent' = true like the following which will make the map scroll to it once created*/
+  if(i == 20) point.isCurrent = true;
+  
+  points.add(point);
 }
 ```
 

@@ -1,3 +1,8 @@
+## 0.0.6
+
+* Add compatibility for `Linux` and `MacOS`
+* Add 'isCurrent' attribute to PointModel which make the scorlling map scroll to a specific point like the current level in games
+
 ## 0.0.5
 
 * Add compatibility for `Web` and `Windows`
