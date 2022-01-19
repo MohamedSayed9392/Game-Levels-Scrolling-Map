@@ -15,7 +15,7 @@ class _MapHorizontalExampleState extends State<MapHorizontalExample> {
     return Scaffold(
       body: Container(
           child: GameLevelsScrollingMap.scrollable(
-        "assets/drawable/map_horizontal.png",
+        imageUrl: "assets/drawable/map_horizontal.png",
         svgUrl: "assets/svg/map_horizontal.svg",
         points: points,
       )), // This trailing comma makes auto-formatting nicer for build methods.

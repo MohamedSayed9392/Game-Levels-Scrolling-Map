@@ -17,7 +17,7 @@ class _MapVerticalExampleState extends State<MapVerticalExample> {
     return Scaffold(
       body: Container(
           child: GameLevelsScrollingMap.scrollable(
-            "assets/drawable/map_vertical.png",
+            imageUrl:"assets/drawable/map_vertical.png",
             direction: Axis.vertical,
             reverseScrolling: true,
             pointsPositionDeltaX: 25,

@@ -25,12 +25,6 @@ flutter:
     - assets/drawable/map_vertical_point.png
     - assets/drawable/map_horizontal.png
     - assets/drawable/map_horizontal_point.png
-    - assets/drawable/em_boy.png
-    - assets/drawable/em_locked_station.png
-    - assets/drawable/em_station.png
-    - assets/drawable/em_station2.png
-    - assets/drawable/em_station3.png
-    - assets/drawable/etkalem_arabi_map.png
     - assets/svg/map_vertical.svg
     - assets/svg/map_horizontal.svg
 

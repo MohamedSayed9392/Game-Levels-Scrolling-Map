@@ -1,3 +1,9 @@
+## 0.0.7
+
+* Add `imageHeight` and `imageWidth` attributes if you know exactly the real height and real width of the background map image
+* Add `backgroundImageWidget` attributes if you need to pass the background as widget (Ex. if you need to use your own image widget instead of Image.asset)
+* Fix some responsiveness issues on small phones
+
 ## 0.0.6
 
 * Add compatibility for `Linux` and `MacOS`
