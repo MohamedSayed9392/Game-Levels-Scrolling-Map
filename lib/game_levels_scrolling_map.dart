@@ -3,6 +3,7 @@ library game_levels_scrolling_map;
 import 'dart:async';
 import 'dart:ui' as ui show Image;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
@@ -82,6 +83,7 @@ class GameLevelsScrollingMap extends StatefulWidget {
 
 class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   List<double>? newX_values = [];
+  List<double>? newYValues = [];
 
   @override
   void initState() {
@@ -95,16 +97,23 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
         await _getPathFromSVG();
       }
       await _loadImage(path: widget.imageUrl);
-      if (widget.isScrollable) {
-        int currentIndex =
-            widget.points!.indexWhere((point) => point.isCurrent!);
-        if (currentIndex != -1 && newX_values!.isNotEmpty) {
-          _scrollController.animateTo(newX_values![currentIndex],
-              duration: const Duration(milliseconds: 1000),
-              curve: Curves.easeIn);
-        }
-      }
+
+      animateToPosition();
     });
+  }
+
+  void animateToPosition() {
+    if (!widget.isScrollable || widget.points == null) return;
+
+    final currentIndex =
+        widget.points!.indexWhere((point) => point.isCurrent ?? false);
+    if (currentIndex == -1) return;
+
+    final points = widget.direction == Axis.vertical ? newYValues : newX_values;
+    if (points == null || currentIndex >= points.length) return;
+
+    _scrollController.animateTo(points[currentIndex],
+        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
   void initDeviceDimensions() {
@@ -264,9 +273,13 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   }
 
   void drawPoints() {
-    double halfScreenSize = (MediaQuery.of(context).size.width) / 2;
-    print("${Q.TAG} maxWidth / imageWidth : ${maxWidth / imageWidth}");
-    print("${Q.TAG} maxHeight / imageHeight : ${maxHeight / imageHeight}");
+    double halfScreenWidth = (MediaQuery.of(context).size.width) / 2;
+    double halfScreenHeight = (MediaQuery.of(context).size.height) / 2;
+
+    if (kDebugMode) {
+      print("${Q.TAG} maxWidth / imageWidth : ${maxWidth / imageWidth}");
+      print("${Q.TAG} maxHeight / imageHeight : ${maxHeight / imageHeight}");
+    }
 
     for (int i = 0; i < widget.points!.length; i++) {
       //widget.points!.add(PointModel(100, testWidget(i)));
@@ -275,7 +288,7 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
             widget.pointsPositionDeltaX!;
 
         x = x - (widget.points![i].width! / 2);
-        newX_values!.add((x - halfScreenSize).abs());
+        newX_values!.add((x - halfScreenWidth).abs());
 
         var y = ((widget.y_values![i] * maxHeight / imageHeight) +
             widget.pointsPositionDeltaY!);
@@ -283,6 +296,7 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
           y = y - widget.currentPointDeltaY!;
         }
         y = y - (widget.points![i].width! / 2);
+        newYValues!.add((y - halfScreenHeight).abs());
 
         print(
             "${Q.TAG} old x,y : ${widget.x_values![i]},${widget.y_values![i]} ## new x,y : $x,$y");
@@ -290,6 +304,11 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
       } else {
         break;
       }
+    }
+
+    if (widget.reverseScrolling == true) {
+      newX_values = newX_values?.reversed.toList(growable: false);
+      newYValues = newYValues?.reversed.toList(growable: false);
     }
   }
 
