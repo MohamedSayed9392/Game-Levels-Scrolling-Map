@@ -38,6 +38,8 @@ class GameLevelsScrollingMap extends StatefulWidget {
   Widget? backgroundImageWidget;
   Color? bgColor;
 
+  int? animateStartingIndex;
+
   GameLevelsScrollingMap({
     this.imageUrl = "",
     @required this.width,
@@ -52,6 +54,7 @@ class GameLevelsScrollingMap extends StatefulWidget {
     this.currentPointDeltaY,
     this.backgroundImageWidget,
     this.bgColor,
+    this.animateStartingIndex,
     Key? key,
   }) : super(key: key);
 
@@ -72,6 +75,7 @@ class GameLevelsScrollingMap extends StatefulWidget {
     this.reverseScrolling,
     this.backgroundImageWidget,
     this.bgColor,
+    this.animateStartingIndex,
     Key? key,
   }) : super(key: key) {
     isScrollable = true;
@@ -107,7 +111,10 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
 
     final currentIndex =
         widget.points!.indexWhere((point) => point.isCurrent ?? false);
-    if (currentIndex == -1) return;
+    if (currentIndex == -1 ||
+        currentIndex < (widget.animateStartingIndex ?? 0)) {
+      return;
+    }
 
     final points = widget.direction == Axis.vertical ? newYValues : newX_values;
     if (points == null || currentIndex >= points.length) return;
