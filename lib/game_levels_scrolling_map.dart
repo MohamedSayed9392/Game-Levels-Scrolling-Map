@@ -3,6 +3,7 @@ library game_levels_scrolling_map;
 import 'dart:async';
 import 'dart:ui' as ui show Image;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
@@ -35,6 +36,9 @@ class GameLevelsScrollingMap extends StatefulWidget {
   bool? reverseScrolling = false;
 
   Widget? backgroundImageWidget;
+  Color? bgColor;
+
+  int? animateStartingIndex;
 
   GameLevelsScrollingMap({
     this.imageUrl = "",
@@ -49,10 +53,13 @@ class GameLevelsScrollingMap extends StatefulWidget {
     this.pointsPositionDeltaY,
     this.currentPointDeltaY,
     this.backgroundImageWidget,
+    this.bgColor,
+    this.animateStartingIndex,
     Key? key,
   }) : super(key: key);
 
-  GameLevelsScrollingMap.scrollable( {this.imageUrl = "",
+  GameLevelsScrollingMap.scrollable({
+    this.imageUrl = "",
     this.width,
     this.height,
     this.imageWidth,
@@ -67,6 +74,8 @@ class GameLevelsScrollingMap extends StatefulWidget {
     this.pointsPositionDeltaY,
     this.reverseScrolling,
     this.backgroundImageWidget,
+    this.bgColor,
+    this.animateStartingIndex,
     Key? key,
   }) : super(key: key) {
     isScrollable = true;
@@ -78,40 +87,45 @@ class GameLevelsScrollingMap extends StatefulWidget {
 
 class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   List<double>? newX_values = [];
+  List<double>? newYValues = [];
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       initDeviceDimensions();
       initDefaults();
 
       if (widget.svgUrl!.isNotEmpty) {
         await _getPathFromSVG();
       }
-      await _loadImage(path : widget.imageUrl);
-      if (widget.isScrollable) {
-        int currentIndex =
-        widget.points!.indexWhere((point) => point.isCurrent!);
-        if (currentIndex != -1 && newX_values!.isNotEmpty) {
-          _scrollController.animateTo(newX_values![currentIndex],
-              duration: const Duration(milliseconds: 1000),
-              curve: Curves.easeIn);
-        }
-      }
+      await _loadImage(path: widget.imageUrl);
+
+      animateToPosition();
     });
   }
 
+  void animateToPosition() {
+    if (!widget.isScrollable || widget.points == null) return;
+
+    final currentIndex =
+        widget.points!.indexWhere((point) => point.isCurrent ?? false);
+    if (currentIndex == -1 ||
+        currentIndex < (widget.animateStartingIndex ?? 0)) {
+      return;
+    }
+
+    final points = widget.direction == Axis.vertical ? newYValues : newX_values;
+    if (points == null || currentIndex >= points.length) return;
+
+    _scrollController.animateTo(points[currentIndex],
+        duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+  }
+
   void initDeviceDimensions() {
-    Q.deviceWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    Q.deviceHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    Q.deviceWidth = MediaQuery.of(context).size.width;
+    Q.deviceHeight = MediaQuery.of(context).size.height;
 
     print("${Q.TAG} Device Dimensions : ${Q.deviceWidth} x ${Q.deviceHeight}");
   }
@@ -147,16 +161,17 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
     return Container(
         alignment: Alignment.center,
         key: widget.key ?? _key,
-        color: Colors.red,
+        color: widget.bgColor,
         width: widget.width != 0 ? widget.width : maxWidth,
         height: maxHeight,
         child: widget.isScrollable
             ? SingleChildScrollView(
-          controller: _scrollController,
-          scrollDirection: widget.direction ?? Axis.horizontal,
-          reverse: widget.reverseScrolling ?? false,
-          child: aspectRatioWidget(),
-        )
+                physics: const ClampingScrollPhysics(),
+                controller: _scrollController,
+                scrollDirection: widget.direction ?? Axis.horizontal,
+                reverse: widget.reverseScrolling ?? false,
+                child: aspectRatioWidget(),
+              )
             : aspectRatioWidget());
   }
 
@@ -167,9 +182,9 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
         builder: (BuildContext context, BoxConstraints constraints) {
           return imageWidth != 0
               ? Stack(
-              textDirection: TextDirection.ltr,
-              alignment: AlignmentDirectional.topStart,
-              children: widgets)
+                  textDirection: TextDirection.ltr,
+                  alignment: AlignmentDirectional.topStart,
+                  children: widgets)
               : const LoadingProgress();
         },
       ),
@@ -188,10 +203,9 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   ImageStream? stream;
   ImageStreamListener? listener;
   Future<ui.Image> _loadImage({String path = ""}) async {
-
-    if(path.isEmpty){
+    if (path.isEmpty) {
       imageStreamListenerCallBack();
-    }else {
+    } else {
       if (path.contains("assets")) {
         stream = AssetImage(path).resolve(ImageConfiguration.empty);
       } else {
@@ -199,7 +213,8 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
       }
 
       listener = ImageStreamListener((ImageInfo frame, bool synchronousCall) {
-        imageStreamListenerCallBack(frame:frame,synchronousCall:synchronousCall);
+        imageStreamListenerCallBack(
+            frame: frame, synchronousCall: synchronousCall);
       });
 
       stream?.addListener(listener!);
@@ -208,9 +223,9 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   }
 
   ui.Image? image;
-  void imageStreamListenerCallBack({ImageInfo? frame, bool? synchronousCall}){
-    if(frame != null) {
-      image = frame?.image;
+  void imageStreamListenerCallBack({ImageInfo? frame, bool? synchronousCall}) {
+    if (frame != null) {
+      image = frame.image;
     }
     imageWidth = widget.imageWidth ?? image!.width.toDouble();
     imageHeight = widget.imageHeight ?? image!.height.toDouble();
@@ -234,16 +249,14 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
     }
 
     print(
-        "${Q
-            .TAG} image all dimensions : $imageWidth : $imageHeight : $aspectRatio");
+        "${Q.TAG} image all dimensions : $imageWidth : $imageHeight : $aspectRatio");
     print(
-        "${Q
-            .TAG} image new dimensions : $maxWidth : $maxHeight : $aspectRatio");
+        "${Q.TAG} image new dimensions : $maxWidth : $maxHeight : $aspectRatio");
 
     widgets.add(backgroundImage());
     drawPoints();
 
-    if(image!= null) {
+    if (image != null) {
       completer.complete(image);
       stream?.removeListener(listener!);
     }
@@ -252,24 +265,28 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
   }
 
   Widget backgroundImage() {
-    return Container(
+    return SizedBox(
       height: maxHeight,
       width: maxWidth,
       child: imageWidth != 0
-          ? widget.backgroundImageWidget ?? (widget.imageUrl.contains("assets")
-          ? Image.asset(widget.imageUrl, fit: BoxFit.fill,filterQuality: FilterQuality.high)
-          : Image.network(widget.imageUrl, fit: BoxFit.fill,filterQuality: FilterQuality.high))
+          ? widget.backgroundImageWidget ??
+              (widget.imageUrl.contains("assets")
+                  ? Image.asset(widget.imageUrl,
+                      fit: BoxFit.fill, filterQuality: FilterQuality.high)
+                  : Image.network(widget.imageUrl,
+                      fit: BoxFit.fill, filterQuality: FilterQuality.high))
           : const LoadingProgress(),
     );
   }
 
   void drawPoints() {
-    double halfScreenSize = (MediaQuery
-        .of(context)
-        .size
-        .width) / 2;
-    print("${Q.TAG} maxWidth / imageWidth : ${maxWidth / imageWidth}");
-    print("${Q.TAG} maxHeight / imageHeight : ${maxHeight / imageHeight}");
+    double halfScreenWidth = (MediaQuery.of(context).size.width) / 2;
+    double halfScreenHeight = (MediaQuery.of(context).size.height) / 2;
+
+    if (kDebugMode) {
+      print("${Q.TAG} maxWidth / imageWidth : ${maxWidth / imageWidth}");
+      print("${Q.TAG} maxHeight / imageHeight : ${maxHeight / imageHeight}");
+    }
 
     for (int i = 0; i < widget.points!.length; i++) {
       //widget.points!.add(PointModel(100, testWidget(i)));
@@ -278,7 +295,7 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
             widget.pointsPositionDeltaX!;
 
         x = x - (widget.points![i].width! / 2);
-        newX_values!.add((x - halfScreenSize).abs());
+        newX_values!.add((x - halfScreenWidth).abs());
 
         var y = ((widget.y_values![i] * maxHeight / imageHeight) +
             widget.pointsPositionDeltaY!);
@@ -286,14 +303,19 @@ class _GameLevelsScrollingMapState extends State<GameLevelsScrollingMap> {
           y = y - widget.currentPointDeltaY!;
         }
         y = y - (widget.points![i].width! / 2);
+        newYValues!.add((y - halfScreenHeight).abs());
 
         print(
-            "${Q.TAG} old x,y : ${widget.x_values![i]},${widget
-                .y_values![i]} ## new x,y : $x,$y");
+            "${Q.TAG} old x,y : ${widget.x_values![i]},${widget.y_values![i]} ## new x,y : $x,$y");
         widgets.add(pointWidget(x, y, child: widget.points![i].child));
       } else {
         break;
       }
+    }
+
+    if (widget.reverseScrolling == true) {
+      newX_values = newX_values?.reversed.toList(growable: false);
+      newYValues = newYValues?.reversed.toList(growable: false);
     }
   }
 
